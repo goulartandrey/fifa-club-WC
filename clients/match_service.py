@@ -1,4 +1,4 @@
-import os
+import time
 from dotenv import load_dotenv
 import requests
 from bs4 import BeautifulSoup
@@ -16,16 +16,24 @@ class MatchService:
         self.__matches_data = []
 
     def start_fun(self):
-        self.get_current_matches()
-        self.get_match_data()
-        for match in self.__matches_data:
-            try:
-                if not self.has_match_started(match):
-                    continue
-                stats = self.extract_statistics(match)
-                self.display_statistics(stats)
-            except Exception as e:
-                print(f"Erro ao processar partida: {e}")
+        while True:
+            self.__matches_url.clear()
+            self.__matches_data.clear()
+
+            self.get_current_matches()
+            self.get_match_data()
+
+            for match in self.__matches_data:
+                try:
+                    if not self.has_match_started(match):
+                        continue
+                    stats = self.extract_statistics(match)
+                    self.display_statistics(stats)
+                except Exception as e:
+                    print(f"Erro ao processar partida: {e}")
+
+            print("Próxima atualizacao em 5 minutos\n")
+            time.sleep(300)
 
     def get_current_matches(self):
         url = "https://www.lance.com.br/temporeal/agenda#2025-06-27"
@@ -35,11 +43,11 @@ class MatchService:
         for link in soup.find_all("a", href=True):
             if "/partida/" in link["href"]:
                 slug = link["href"].split("/partida/")[-1].replace("/", "")
-                # if slug.startswith("mundial-de-clubes-fifa-2025-"):
-                json_url = f"https://temporeal.lance.com.br/storage/matches/{slug}.json"
-                self.__matches_url.append(json_url)
-                # else:
-                #     print("Nenhuma partida do mundial de clubes no dia de hoje.")
+                if slug.startswith("mundial-de-clubes-fifa-2025-"):
+                    json_url = f"https://temporeal.lance.com.br/storage/matches/{slug}.json"
+                    self.__matches_url.append(json_url)
+                else:
+                    print("Nenhuma partida do mundial de clubes no dia de hoje.")
 
     def get_match_data(self):
         for url in self.__matches_url:
@@ -74,8 +82,9 @@ class MatchService:
         stats = match_data['match']['statistics']
         team_a = match_data['match']['team_a']['name']
         team_a_goals = match_data['match']['team_a_score_goals']
-        team_b_goals = match_data['match']['team_b_score_goals']
         team_b = match_data['match']['team_b']['name']
+        team_b_goals = match_data['match']['team_b_score_goals']
+        match_period = match_data['match']['match_period']['period']
 
         labels = {
             "Posse de bola": 0,
@@ -95,7 +104,8 @@ class MatchService:
             "score": {
                 "team_a": team_a_goals,
                 "team_b": team_b_goals
-            }
+            },
+            "match_period": match_period
         }
 
         for label, index in labels.items():
@@ -129,15 +139,15 @@ class MatchService:
         gol_team_a = statistics["score"]["team_a"]
         gol_team_b = statistics["score"]["team_b"]
         team_b = statistics["teams"]["team_b"]
+        match_period = statistics["match_period"]
 
-        message = f"Estatísticas de {team_a} {gol_team_a} x {gol_team_b} {team_b}:\n"
-        print(message)
+        message = f"Estatísticas de {team_a} {gol_team_a} x {gol_team_b} {team_b} - {match_period}:\n"
 
         for stat_name, values in statistics["data"].items():
             stat_line = f"{stat_name}:\n  {team_a}: {values[team_a]}\n  {team_b}: {values[team_b]}\n"
-            print(stat_line)
-            print("-" * 30)
             message += stat_line + "\n"
+            message += "Próxima atualização em 5 minutos."
 
         whats_service = WhatsAppService()
-        whats_service.send_message(message.strip())
+        whats_service.send_message(
+            message=message.strip(), team_a=team_a, team_b=team_b)
