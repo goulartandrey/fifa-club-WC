@@ -36,18 +36,16 @@ class MatchService:
             time.sleep(300)
 
     def get_current_matches(self):
-        url = "https://www.lance.com.br/temporeal/agenda#2025-06-27"
+        url = "https://www.lance.com.br/temporeal/agenda"
         response = requests.get(url)
         soup = BeautifulSoup(response.text, "html.parser")
 
         for link in soup.find_all("a", href=True):
             if "/partida/" in link["href"]:
                 slug = link["href"].split("/partida/")[-1].replace("/", "")
-                if slug.startswith("mundial-de-clubes-fifa-2025-"):
+                if slug.startswith("mundial"):
                     json_url = f"https://temporeal.lance.com.br/storage/matches/{slug}.json"
                     self.__matches_url.append(json_url)
-                else:
-                    print("Nenhuma partida do mundial de clubes no dia de hoje.")
 
     def get_match_data(self):
         for url in self.__matches_url:
@@ -142,12 +140,14 @@ class MatchService:
         match_period = statistics["match_period"]
 
         message = f"Estatísticas de {team_a} {gol_team_a} x {gol_team_b} {team_b} - {match_period}:\n"
-
+        finished = True
         for stat_name, values in statistics["data"].items():
             stat_line = f"{stat_name}:\n  {team_a}: {values[team_a]}\n  {team_b}: {values[team_b]}\n"
             message += stat_line + "\n"
-            message += "Próxima atualização em 5 minutos."
+            if not match_period == 'Partida encerrada':
+                finished = False
+                message += "Próxima atualização em 5 minutos."
 
         whats_service = WhatsAppService()
         whats_service.send_message(
-            message=message.strip(), team_a=team_a, team_b=team_b)
+            message=message.strip(), team_a=team_a, team_b=team_b, finished=finished)
