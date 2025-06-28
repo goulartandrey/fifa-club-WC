@@ -21,7 +21,7 @@ Este projeto coleta e envia automaticamente **estatísticas de partidas do Mundi
 ## 📦 Instalação
 
 # Clone o repositório
-git clone git@github.com:goulartandrey/fifa-club-WC.git
+git clone https://github.com/goulartandrey/rpa_challenge.git
 cd fifa-club-WC
 
 # Crie e ative o ambiente virtual (opcional)
