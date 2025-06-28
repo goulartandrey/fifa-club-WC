@@ -36,6 +36,6 @@ Para o envio de mensagens com a api do Callmebot (https://www.callmebot.com/blog
 1. Adicionar aos seus contatos o número +34 644 33 66 63
 2. Enviar a seguinte e exata mensagem: "I allow callmebot to send me messages" para permitir o envio de mensagens para o seu número
 3. Você receberá uma chave de api numérica
-4. Renomeio o arquivo **.env.example** para **.env** e coloque seu número de telefone no formato +555199999999 (sem o costumerio "9" adicional) na variável CALLME_BOT_WHATSAPP_NUMBER
+4. Renomeio o arquivo **.env.example** para **.env** e coloque seu número de telefone no formato +555199999999 (sem o "9" adicional) na variável CALLME_BOT_WHATSAPP_NUMBER
 5. Adicione a chave de api recebida no passo 3 da api Callmebot no .env na variável CALLME_BOT_API_KEY
 6. Pronto, é só executar o arquivo main.py and the fun has started 😉
