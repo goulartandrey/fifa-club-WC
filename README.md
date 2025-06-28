@@ -21,16 +21,15 @@ Este projeto coleta e envia automaticamente **estatísticas de partidas do Mundi
 ## 📦 Instalação
 
 # Clone o repositório
-git clone https://github.com/goulartandrey/rpa_challenge.git
-
-cd fifa-club-WC
+- git clone https://github.com/goulartandrey/rpa_challenge.git
+- cd fifa-club-WC
 
 # Crie e ative o ambiente virtual (opcional)
-python -m venv venv
-source venv/bin/activate  # No Windows: venv\Scripts\activate
+- python -m venv venv
+- source venv/bin/activate  # No Windows: venv\Scripts\activate
 
 # Instale as dependências
-pip install -r requirements.txt
+- pip install -r requirements.txt
 
 ## ⚙️ Configuração
 Para o envio de mensagens com a api do Callmebot (https://www.callmebot.com/blog/free-api-whatsapp-messages/), seguir os passos abaixo:
