@@ -144,9 +144,9 @@ class MatchService:
         for stat_name, values in statistics["data"].items():
             stat_line = f"{stat_name}:\n  {team_a}: {values[team_a]}\n  {team_b}: {values[team_b]}\n"
             message += stat_line + "\n"
-            if not match_period == 'Partida encerrada':
-                finished = False
-                message += "Próxima atualização em 5 minutos."
+        if not match_period == 'Partida encerrada':
+            finished = False
+            message += "Próxima atualização em 5 minutos."
 
         whats_service = WhatsAppService()
         whats_service.send_message(
